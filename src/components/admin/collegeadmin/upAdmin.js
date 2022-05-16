@@ -1,28 +1,48 @@
 import React, {useEffect, useState} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
+import {useParams} from "react-router-dom";
 
-const AddAdmin=()=>{
+const UpdateAdmin=()=>{
+
     const [admin,setAdmin]=useState({
-        admin_name:"",description:"",college_id:0,admin_password:"",role:"collegeadmin"
+        admin_id:0,admin_name:"",description:"",college_id:0,admin_password:"",role:"collegeadmin"
     });
+    const [selectDefault, setSelectDefault] = useState("")
+    admin.admin_id=useParams();
+
     let eleName,value;
     const handleInputs=(e)=>{
         eleName=e.target.name;
         value=e.target.value;
         setAdmin({...admin,[eleName]:value});
     }
-    const [colleges,setColleges]=useState([]);
-    // useEffect(()=>{
-    //     const getColleges=async ()=>{
-    //         const res=await Axios.get('http://localhost:5100/college');
-    //         const getclg=await JSON.stringify(res.data);
-    //         setColleges(await getclg);
-    //         console.log(colleges);
-    //     }
-    //     getColleges();
-    // });
 
+    useEffect(() => {
+        if(!admin || admin.admin_name==="") {
+            getAdmin();
+            getColleges();
+            // getCollege();
+        }
+        // console.log(collegid);
+        setSelectDefault(admin.college_id)
+    },[])
+    var collegid=admin.college_id;
+    var getAdminData={};
+    const getAdmin=async ()=>{
+        const res=await Axios.get(`http://localhost:5100/admin/user/${admin.admin_id.id}`);
+        getAdminData=res.data;
+        setAdmin({admin,...res.data});
+        console.log(admin);
+    }
+    const [colleges,setColleges]=useState([]);
+    const getColleges=async ()=>{
+        const res=await Axios.get('http://localhost:5100/college');
+        const getclg= res.data;
+        setColleges(getclg);
+        console.log('----', getclg);
+        // console.log(colleges);
+    }
     const ComparePassword=(e)=>{
         if(admin.admin_password!==e.target.value){
             console.log("Password didn't Match");
@@ -34,9 +54,12 @@ const AddAdmin=()=>{
 
     const postAdminDetails=async (e)=>{
         e.preventDefault();
-        //console.log(admin);
-        const {admin_name,description}=admin;
-        const res=await Axios.post('http://localhost:5100/admin/user',{
+        console.log(admin.admin_id.id);
+        const {admin_name,admin_password,college_id,description,role,admin_id}=admin;
+
+        // console.log("Hello");
+        // console.log(`http://localhost:5100/admin/user/${admin.admin_id.id}`);
+        const res=await Axios.put(`http://localhost:5100/admin/user/${admin.admin_id.id}`,{
             admin_name:admin.admin_name,
             admin_password:admin.admin_password,
             college_id:admin.college_id,
@@ -54,7 +77,12 @@ const AddAdmin=()=>{
         }).then((res)=>
         {
             console.log(res.data);
+        }).catch(e=>{
+            console.log(e);
         });
+
+
+
 
 
     }
@@ -77,36 +105,19 @@ const AddAdmin=()=>{
                                                 <label>Admin Name</label>
                                                 <input type="text" name="admin_name" className="form-control"
                                                        value={admin.admin_name} onChange={handleInputs}
+                                                       onFocus={getAdmin}
                                                 />
                                             </div>
-                                            <div className="col-md-12 ">
-                                                <label>Admin Password</label>
-                                                <input type="password" name="admin_password" className="form-control"
-                                                       value={admin.admin_password} onChange={handleInputs}
-                                                />
-                                            </div>
-                                            <div className="col-md-12 ">
-                                                <label>Admin Confirm Password</label>
-                                                <input type="password" name="admin_cpassword" className="form-control"
-                                                       value={admin.admin_cpassword} onChange={handleInputs}
-                                                       onKeyUp={ComparePassword}
+                                           
 
-                                                />
-                                            </div>
                                             <div className="col-md-12 ">
                                                 <label>College Name</label>
-                                                <select name="college_id" className="form-control"
-                                                        onChange={handleInputs}
-                                               >
-                                                    <option value="0">--Select College--</option>
-                                                    <option value="1">Test College</option>
-                                                    {/*List of College Shown here*/}
-                                                    {/*{*/}
-                                                    {/*    colleges.map((getclg)=>{*/}
-                                                    {/*            <option key={<getclg className="college_id"></getclg>} value={getclg.college_id}>{getclg.college_name}</option>*/}
-                                                    {/*        }*/}
-                                                    {/*    )*/}
-                                                    {/*}*/}
+                                                <select  name="college_id" className="form-control"
+                                                         onChange={handleInputs} value={selectDefault}>
+                                                    {colleges.map(item => {
+                                                        console.log(item);
+                                                        return <option key={item.college_id} value={item.college_id}> {item.college_name}</option>
+                                                    })}
                                                 </select>
                                             </div>
                                             <div className="col-md-12 ">
@@ -115,7 +126,12 @@ const AddAdmin=()=>{
                                                            value={admin.description} onChange={handleInputs}
                                                 />
                                             </div>
-
+                                            <div className="col-md-12 ">
+                                                <label className="mt-3">Role</label>
+                                                <input type="text"  name="role" className="form-control"
+                                                           value={admin.role} onChange={handleInputs}
+                                                />
+                                            </div>
                                             <button onClick={postAdminDetails} className="btn btn-sm btn-success
                                             mt-3 mx-2" > Submit Information</button>
 
@@ -132,4 +148,4 @@ const AddAdmin=()=>{
     )
 }
 
-export default AddAdmin;
+export default UpdateAdmin;

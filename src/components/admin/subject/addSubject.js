@@ -2,25 +2,26 @@ import React, {useState} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
 
-const AddSubjectType=()=>{
-    const [subjecttype,setSubjectType]=useState({
-        subjecttype_name:"",description:"",
+const AddSubject=()=>{
+    const [subject,setSubject]=useState({
+        subject_name:"",subject_code:"",subjecttype_id:0,
     });
     let eleName,value;
     const handleInputs=(e)=>{
         eleName=e.target.name;
         value=e.target.value;
-        setSubjectType({...subjecttype,[eleName]:value});
+        setSubject({...subject,[eleName]:value});
     }
     let message="";
     let ismessage=false;
-    const postSubjectTypeDetails=async (e)=>{
+    const postSubjectDetails=async (e)=>{
         e.preventDefault();
-        const {subjecttype_name,description}=subjecttype;
+        const {subject_name,description}=subject;
         //check the api call here
-        const res=await Axios.post('http://localhost:5100/subject/subject-types',{
-            subjecttype_name:subjecttype.subjecttype_name,
-            description:subjecttype.description,
+        const res=await Axios.post('http://localhost:5100/subject/',{
+            subject_name:subject.subject_name,
+            subject_code:subject.subject_code,
+            subjecttype_id:subject.subjecttype_id
         },{
 
             headers:{
@@ -50,25 +51,34 @@ const AddSubjectType=()=>{
                     <div className="col-md-3">&nbsp;</div>
                     <div className="col-md-6">
                         <div className="card border-secondary mt-3 text-justify">
-                            <div className="card-header"><h4 className="card-title"> Add New SubjectType</h4></div>
+                            <div className="card-header"><h4 className="card-title"> Add New Subject</h4></div>
                             <div className="card-body">
                                 <div className="container form-floating">
-                                    <form method="POST" id="form-subjecttype">
+                                    <form method="POST" id="form-subject">
                                         <div className="row">
                                             <div className="col-md-12 ">
-                                                <label>SubjectType Name</label>
-                                                <input type="text" name="subjecttype_name" className="form-control"
-                                                       value={subjecttype.subjecttype_name} onChange={handleInputs}
+                                                <label>Subject Code</label>
+                                                <input type="text" name="subject_code" className="form-control"
+                                                       value={subject.subject_code} onChange={handleInputs}
+                                                />
+                                            </div>
+                                            <div className="col-md-12 ">
+                                                <label>Subject Name</label>
+                                                <input type="text" name="subject_name" className="form-control"
+                                                       value={subject.subject_name} onChange={handleInputs}
                                                 />
                                             </div>
                                             <div className="col-md-12 ">
                                                 <label className="mt-3">Description</label>
-                                                <textarea  name="description" className="form-control"
-                                                           value={subjecttype.description} onChange={handleInputs}
-                                                />
+                                                <select name="subjecttype_id" onChange={handleInputs} className="form-control">
+                                                    <option value="0">--select subject type--</option>
+                                                    {/*This is hard coded list of Subject type:
+                                                     Need to write code here to fetch the list of subjecttype from DB*/}
+                                                    <option value="1">Core Subject</option>
+                                                </select>
                                             </div>
 
-                                            <button onClick={postSubjectTypeDetails} className="btn btn-sm btn-success mt-3 mx-2" > Submit Information</button>
+                                            <button onClick={postSubjectDetails} className="btn btn-sm btn-success mt-3 mx-2" > Submit Information</button>
 
                                         </div>
                                     </form>
@@ -84,4 +94,4 @@ const AddSubjectType=()=>{
     )
 }
 
-export default AddSubjectType;
+export default AddSubject;

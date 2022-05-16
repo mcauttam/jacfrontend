@@ -1,11 +1,11 @@
 import React, {useState} from "react";
-import IsAdmin from "./isAdmin";
+import IsAdmin from "../isAdmin";
 import Axios from "axios";
 
 const AddCollege=()=>{
     const [college,setCollege]=useState({
         college_name:"",description:"",
-    });
+    });//my battery died, will talk here, are you on mute?
     let eleName,value;
     const handleInputs=(e)=>{
         eleName=e.target.name;
