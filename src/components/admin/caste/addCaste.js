@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
-
+import dotenv from 'dotenv';
+dotenv.config()
 const AddCaste=()=>{
     const [caste,setCaste]=useState({
         caste_name:"",caste_description:"",caste_issuedby:"",caste_belongsto_jharkhand:false,
@@ -18,7 +19,8 @@ const AddCaste=()=>{
         e.preventDefault();
         const {caste_name,description}=caste;
         //check the api call here
-        const res=await Axios.post('http://localhost:5100/caste/',{
+        const api_name=process.env.BACKEND_API;
+        const res=await Axios.post(`${api_name}/caste/`,{
             caste_name:caste.caste_name,
             caste_description:caste.caste_description,
             caste_issuedby:caste.caste_issuedby,

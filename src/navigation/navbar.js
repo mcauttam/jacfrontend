@@ -23,8 +23,8 @@ const Navbar=()=>{
                                 <a className="nav-link" href="/student">Student</a>
                             </li>
                             <li className="nav-item">
-                                {/*<a className="nav-link" href="/college">Colleges</a>*/}
-                                <Link to="/newApp" replace>Colleges</Link>
+                                <a className="nav-link" href="/college">Colleges</a>
+                                {/*<Link to="/newApp" replace>Colleges</Link>*/}
                             </li>
 
                             <li className="nav-item dropdown">

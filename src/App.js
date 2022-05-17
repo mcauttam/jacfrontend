@@ -15,6 +15,11 @@ import AddSubject from "./components/admin/subject/addSubject";
 import AddGroup from "./components/admin/groups/addGroup";
 import AddCaste from "./components/admin/caste/addCaste";
 import UpdateAdmin from "./components/admin/collegeadmin/upAdmin";
+import {ContactUS} from "./components/email/email";
+import Login from "./components/Student/login";
+import StudentDashboard from "./components/Student/dashboard/dashboard";
+import convenienceFee from "./components/admin/convenience-fee/convenienceFee";
+import AddConvenienceFee from "./components/admin/convenience-fee/convenienceFee";
 
 
 
@@ -24,11 +29,11 @@ function App(){
 
         <>
             <Router history={history}>
-                {/*<Navbar/>*/}
+                <Navbar/>
                 <Switch>
                     <Route exact path="/" component={StudentBasicRegistration}/>
                     <Route exact path="/newApp" component={NewApp}/>
-                    <Route exact path="/profile/:id" component={()=><StudentProfile/>}/>
+                    <Route exact path="/student/profile/:id" component={()=><StudentProfile/>}/>
                     <Route exact path="/student/home" component={()=><Home/>}/>
                     {/*All Admin Routes*/}
                     <Route exact path="/admin/addCollege" component={AddCollege}/>
@@ -39,8 +44,17 @@ function App(){
                     <Route exact path="/admin/addSubject" component={AddSubject}/>
                     <Route exact path="/admin/addGroup" component={AddGroup}/>
                     <Route exact path="/admin/addCaste" component={AddCaste}/>
-                    {/*All Student's Routes*/}
 
+
+                    {/*All Student's Routes*/}
+                    {/*Login Student*/}
+                    <Route exact path="/student/login" component={Login}/>
+                    {/*Student Dashboard*/}
+                    <Route exact path="/student/dashboard" component={StudentDashboard}/>
+                    {/*<Route exact path="/student/convenience-fee" component={getConvenienceFeeDetails}/>*/}
+
+                    {/*Email Realted Services*/}
+                    <Route exact path="/admin/email" component={ContactUS}/>
                     <Route path="*" component={()=><Error404/>}/>
                 </Switch>
             </Router>

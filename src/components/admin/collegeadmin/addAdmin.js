@@ -20,7 +20,7 @@ const AddAdmin=()=>{
         }
     });
     const getColleges=async ()=>{
-        const res=await Axios.get('http://localhost:5100/college');
+        const res=await Axios.get(`${process.env.BACKEND_API}/college`);
         const getclg= res.data;
         setColleges(getclg);
         console.log('----', getclg);
@@ -40,7 +40,7 @@ const AddAdmin=()=>{
         e.preventDefault();
         //console.log(admin);
         const {admin_name,description}=admin;
-        const res=await Axios.post('http://localhost:5100/admin/user',{
+        const res=await Axios.post(`${process.env.BACKEND_API}/admin/user`,{
             admin_name:admin.admin_name,
             admin_password:admin.admin_password,
             college_id:admin.college_id,
