@@ -2,25 +2,37 @@ import React, {useEffect, useState} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
 import {FormSelect} from "react-bootstrap-v5";
+import dotenv from "dotenv";
+import {useHistory} from "react-router-dom";
+dotenv.config();
 
 const AddAdmin=()=>{
+    const history=useHistory();
     const [admin,setAdmin]=useState({
         admin_name:"",description:"",college_id:0,admin_password:"",role:"collegeadmin"
     });
     let eleName,value;
     const handleInputs=(e)=>{
-        eleName=e.target.name;
-        value=e.target.value;
-        setAdmin({...admin,[eleName]:value});
+        try {
+            eleName = e.target.name;
+            value = e.target.value;
+            setAdmin({...admin, [eleName]: value});
+        }
+        catch(err){
+            console.log(err.message);
+        }
     }
     const [colleges,setColleges]=useState([]);
     useEffect(()=>{
         if(!colleges || colleges.length === 0){
             getColleges();
+            // debugger
         }
     });
     const getColleges=async ()=>{
-        const res=await Axios.get(`${process.env.BACKEND_API}/college`);
+        // console.log(`${process.env.REACT_APP_URI}/college`);
+        const res=await Axios.get(`${process.env.REACT_APP_URI}college`);
+        // debugger
         const getclg= res.data;
         setColleges(getclg);
         console.log('----', getclg);
@@ -29,7 +41,7 @@ const AddAdmin=()=>{
     const clgarray=[colleges];
     const ComparePassword=(e)=>{
         if(admin.admin_password!==e.target.value){
-            console.log("Password didn't Match");
+            alert("Password didn't Match");
         }
         else{
             console.log("Password Match")
@@ -40,7 +52,7 @@ const AddAdmin=()=>{
         e.preventDefault();
         //console.log(admin);
         const {admin_name,description}=admin;
-        const res=await Axios.post(`${process.env.BACKEND_API}/admin/user`,{
+        const res=await Axios.post(`${process.env.REACT_APP_URI}admin/user`,{
             admin_name:admin.admin_name,
             admin_password:admin.admin_password,
             college_id:admin.college_id,
@@ -58,6 +70,13 @@ const AddAdmin=()=>{
         }).then((res)=>
         {
             console.log(res.data);
+            if(!res){
+                alert("Either the admin is already exist or something went wrong. Please contact to your administrator.")
+                return;
+            }
+            else{
+                history.push("/admin/success/Admin/true");
+            }
         });
 
 
@@ -106,19 +125,7 @@ const AddAdmin=()=>{
                                                         return <option key={item.college_id} value={item.college_id}> {item.college_name}</option>
                                                     })}
                                                 </select>
-                                               {/* <select name="college_id" className="form-control"*/}
-                                               {/*         onChange={handleInputs}*/}
-                                               {/*>*/}
-                                               {/*     /!*<option value="0">--Select College--</option>*!/*/}
-                                               {/*     /!*<option value="1">Test College</option>*!/*/}
-                                               {/*     /!*List of College Shown here*!/*/}
-                                               {/*     {*/}
-                                               {/*         colleges.map((college)=>{*/}
-                                               {/*                return(<option )*/}
-                                               {/*             }*/}
-                                               {/*         )*/}
-                                               {/*     }*/}
-                                               {/* </select>*/}
+
                                             </div>
                                             <div className="col-md-12 ">
                                                 <label className="mt-3">Description</label>

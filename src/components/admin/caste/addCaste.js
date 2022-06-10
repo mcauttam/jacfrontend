@@ -1,9 +1,12 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
 import dotenv from 'dotenv';
+import {useHistory} from "react-router-dom";
+// import {useEffect} from "@types/react";
 dotenv.config()
 const AddCaste=()=>{
+    const history=useHistory();
     const [caste,setCaste]=useState({
         caste_name:"",caste_description:"",caste_issuedby:"",caste_belongsto_jharkhand:false,
     });
@@ -13,18 +16,36 @@ const AddCaste=()=>{
         value=e.target.value;
         setCaste({...caste,[eleName]:value});
     }
+
+    const [categories,setCategories]=useState([]);
+    useEffect(()=>{
+        if(!categories || categories.length === 0){
+            getCategories();
+            // debugger
+        }
+    });
+    const getCategories=async ()=>{
+        // console.log(`${process.env.REACT_APP_URI}/college`);
+        const res=await Axios.get(`${process.env.REACT_APP_URI}caste/category`);
+        // debugger
+        const getclg= res.data;
+        setCategories(getclg);
+        console.log('----', getclg);
+        // console.log(colleges);
+    }
     let message="";
     let ismessage=false;
     const postCasteDetails=async (e)=>{
         e.preventDefault();
         const {caste_name,description}=caste;
         //check the api call here
-        const api_name=process.env.BACKEND_API;
-        const res=await Axios.post(`${api_name}/caste/`,{
+        const api_name=process.env.REACT_APP_URI;
+        const res=await Axios.post(`${api_name}caste/`,{
             caste_name:caste.caste_name,
             caste_description:caste.caste_description,
             caste_issuedby:caste.caste_issuedby,
-            caste_belongsto_jharkhand:caste.caste_belongsto_jharkhand
+            caste_belongsto_jharkhand:caste.caste_belongsto_jharkhand,
+            category_id:caste.category_id
         },{
 
             headers:{
@@ -39,7 +60,13 @@ const AddCaste=()=>{
             ismessage=true;
             message=res.data.message;
             console.log(res.data);
-
+            if(!res){
+                alert("Either the Caste is already exist or something went wrong. Please contact to your administrator.")
+                return;
+            }
+            else{
+                history.push("/admin/success/Caste/true");
+            }
         });
 
 
@@ -80,6 +107,17 @@ const AddCaste=()=>{
                                                 <input type="text" name="caste_issuedby" className="form-control"
                                                        value={caste.caste_issuedby} onChange={handleInputs}
                                                 />
+                                            </div>
+                                            <div className="col-md-12 ">
+                                                <label>Category</label>
+                                                <select  name="category_id" className="form-control"
+                                                         onChange={handleInputs}>
+                                                    {categories.map(item => {
+                                                        console.log(item);
+                                                        return <option key={item.category_id} value={item.category_id}> {item.category_name}</option>
+                                                    })}
+                                                </select>
+
                                             </div>
                                             <div className="col-md-12 ">
                                                 <label>Description</label>

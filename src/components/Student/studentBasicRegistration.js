@@ -5,6 +5,7 @@ import env from 'react-dotenv';
 import Home from "./Home";
 import NewApp from "./newApp";
 import {Navigate} from "react-router";
+import {ReactSession} from "react-client-session";
 //dotenv.config();
 
 const StudentBasicRegistration=()=>{
@@ -18,30 +19,27 @@ const StudentBasicRegistration=()=>{
     // }
     let history=useHistory();
     let eleName,value;
+    ReactSession.setStoreType("localStorage");
     const handleInputs=(e)=>{
         eleName=e.target.name;
         value=e.target.value;
         setStudent({...student,[eleName]:value});
     }
+    useEffect(()=>{
+        setLoginStatus(true);
+    },[])
     const onStudentLogin=(e)=>{
         e.preventDefault();
-        //console.log(student);
-        Axios.post('http://localhost:5100/auth/student/login',{
+        Axios.post(`${process.env.REACT_APP_URI}auth/student/login`,{
             student_email:student.student_email,
             student_password:student.student_password
         }).then((res)=>{
-           console.log(res.data.auth);
             if(res.data.auth)
             {
-                setLoginStatus(true);
-                alert('Success');
-                console.log(loginStatus);
-                // return <Redirect to="/student/home"/>
-                // history.push("/profile");
-
-                history.push("/profile");
-
-                console.log(history);
+                localStorage.clear();
+                ReactSession.set("login_status",loginStatus);
+                ReactSession.set("student_id",res.data.data.student_id);
+                history.push("/student/dashboard");
             }else{
                 return <Redirect to="/"/>
             }
@@ -57,11 +55,7 @@ const StudentBasicRegistration=()=>{
                 <div className="col-md-8">
                     <div className="card border-secondary mt-3 text-justify">
                         <div className="card-header"><h4 className="card-title"> Step 1:
-
-                                <a href="/newApp" > Click here </a><br/>
-                            {/*<Link to="/newApp" >Click Here</Link>*/}
-                            <Link to="/newApp" >Colleges</Link>
-
+                                <a href="/newApp" > Click here </a>
                             to create Student ID</h4></div>
                         <div className="card-body">
                             <h4 className="card-title">Step 2: Login to Apply </h4>
@@ -75,7 +69,7 @@ const StudentBasicRegistration=()=>{
                                         />
                                         <label className="mt-3">Verification Code/Password:</label>
                                         <input type="password" className="form-control" name="student_password"
-                                               value={student.student_name} onChange={handleInputs}
+                                               value={student.student_password} onChange={handleInputs}
                                         />
                                         <button type="submit" className="btn btn-sm btn-success mt-3 mx-2" >Login</button>
                                         <button className="btn btn-sm btn-warning mt-3 mx-2" >Forgot Password</button>

@@ -1,8 +1,10 @@
 import React, {useState} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
+import {useHistory} from "react-router-dom";
 
 const AddSubjectType=()=>{
+    const history=useHistory();
     const [subjecttype,setSubjectType]=useState({
         subjecttype_name:"",description:"",
     });
@@ -18,7 +20,7 @@ const AddSubjectType=()=>{
         e.preventDefault();
         const {subjecttype_name,description}=subjecttype;
         //check the api call here
-        const res=await Axios.post('http://localhost:5100/subject/subject-types',{
+        const res=await Axios.post(`${process.env.REACT_APP_URI}subject/subject-types`,{
             subjecttype_name:subjecttype.subjecttype_name,
             description:subjecttype.description,
         },{
@@ -35,7 +37,13 @@ const AddSubjectType=()=>{
             ismessage=true;
             message=res.data.message;
             console.log(res.data);
-
+            if(!res){
+                alert("Either the Subject Type is already exist or something went wrong. Please contact to your administrator.")
+                return;
+            }
+            else{
+                history.push("/admin/success/Subject Type/true");
+            }
         });
 
 

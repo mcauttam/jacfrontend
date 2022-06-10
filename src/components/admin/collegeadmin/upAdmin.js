@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
 import {useParams} from "react-router-dom";
+import {getColleges} from "../../../helpers/collegeHelpers";
 
 const UpdateAdmin=()=>{
 
@@ -30,19 +31,20 @@ const UpdateAdmin=()=>{
     var collegid=admin.college_id;
     var getAdminData={};
     const getAdmin=async ()=>{
-        const res=await Axios.get(`http://localhost:5100/admin/user/${admin.admin_id.id}`);
+        const res=await Axios.get(`${process.env.REACT_APP_URI}admin/user/${admin.admin_id.id}`);
         getAdminData=res.data;
         setAdmin({admin,...res.data});
         console.log(admin);
     }
     const [colleges,setColleges]=useState([]);
     const getColleges=async ()=>{
-        const res=await Axios.get('http://localhost:5100/college');
+        const res=await Axios.get(`${process.env.REACT_APP_URI}college`);
         const getclg= res.data;
         setColleges(getclg);
         console.log('----', getclg);
         // console.log(colleges);
     }
+
     const ComparePassword=(e)=>{
         if(admin.admin_password!==e.target.value){
             console.log("Password didn't Match");

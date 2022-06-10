@@ -1,8 +1,10 @@
 import React, {useState} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
+import {useHistory} from "react-router-dom";
 
 const AddSubject=()=>{
+    const history=useHistory();
     const [subject,setSubject]=useState({
         subject_name:"",subject_code:"",subjecttype_id:0,
     });
@@ -18,7 +20,7 @@ const AddSubject=()=>{
         e.preventDefault();
         const {subject_name,description}=subject;
         //check the api call here
-        const res=await Axios.post('http://localhost:5100/subject/',{
+        const res=await Axios.post(`${process.env.REACT_APP_URI}subject/`,{
             subject_name:subject.subject_name,
             subject_code:subject.subject_code,
             subjecttype_id:subject.subjecttype_id
@@ -36,7 +38,13 @@ const AddSubject=()=>{
             ismessage=true;
             message=res.data.message;
             console.log(res.data);
-
+            if(!res){
+                alert("Either the Subject is already exist or something went wrong. Please contact to your administrator.")
+                return;
+            }
+            else{
+                history.push("/admin/success/Subject/true");
+            }
         });
 
 

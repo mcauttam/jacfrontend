@@ -1,12 +1,27 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
+import {useHistory} from "react-router-dom";
 
 const AddGroup=()=>{
+    const history=useHistory();
     const [group,setGroup]=useState({
         group_title:"",stream_id:"",description:""
     });
+    const [allStreams,setAllStreams]=useState([{}]);
     let eleName,value;
+
+    useEffect(()=>{
+        getAllStreams();
+    },[])
+
+    const getAllStreams=async ()=>{
+        //code to get all stream from the DB
+        const streams=await Axios.get(`${process.env.REACT_APP_URI}stream`);
+        const getStreams= streams.data;
+        setAllStreams(getStreams);
+        console.log('----', getStreams);
+    }
     const handleInputs=(e)=>{
         eleName=e.target.name;
         value=e.target.value;
@@ -15,7 +30,7 @@ const AddGroup=()=>{
     const postGroupDetails=async (e)=>{
         e.preventDefault();
         const {group_name,description}=group;
-        const res=await Axios.post('http://localhost:5100/subject/group',{
+        const res=await Axios.post(`${process.env.REACT_APP_URI}subject/group`,{
             group_title:group.group_title,
             stream_id:group.stream_id,
             description:group.description,
@@ -31,6 +46,17 @@ const AddGroup=()=>{
         }).then((res)=>
         {
             console.log(res.data);
+            if(!res){
+                alert("Either the Group is already exist or something went wrong. Please contact to your administrator.")
+                return;
+            }
+            else{
+                if(res.data.isUpdate) {
+                    history.push("/admin/success/Group/true");
+                }
+                alert("Either the Group is already exist or something went wrong. Please contact to your administrator.")
+                return;
+            }
         });
         //const response=await res.json();
         // if(!response || response.status>=400){
@@ -67,7 +93,13 @@ const AddGroup=()=>{
                                                        value={group.stream_id} onChange={handleInputs}
                                                 >
                                                     <option value="0">--Select Stream--</option>
-                                                    <option value="1">Stream 1</option>
+                                                    {/*
+                                                    Code to select all stream from the DB
+                                                    */}
+                                                    {allStreams.map(item => {
+                                                        // console.log(item);
+                                                        return <option key={item.stream_id} value={item.stream_id}> {item.stream_name}</option>
+                                                    })}
                                                 </select>
                                             </div>
                                             <div className="col-md-12 ">

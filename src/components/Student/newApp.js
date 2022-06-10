@@ -1,10 +1,12 @@
 import React, { useState} from "react";
-import {useHistory} from "react-router";
+import {useHistory} from "react-router-dom";
 import Axios from "axios";
+import {ReactSession} from "react-client-session";
 // import {useHistory} from "react-router";
 // import {withRouter} from "react-router-dom";
 
 const NewApp=props=>{
+    const history=useHistory();
     const [student,setStudent]=useState({
         student_name:"",student_fathername:"",student_dob:"",student_gender:"",
         student_mobile:"",student_email:"",student_batch:"",
@@ -20,10 +22,11 @@ const NewApp=props=>{
     }
 
     const postStudentBasic=async (e)=>{
+        var response={};
         e.preventDefault();
         const {student_name,student_fatherName,student_dob,student_gender,
             student_mobile,student_email,student_batch}=student;
-        const res=await Axios.post('http://localhost:5100/student/basic',{
+        const res=await Axios.post(`${process.env.REACT_APP_URI}student/basic`,{
             student_name:student.student_name,
             student_fatherName:student.student_fatherName,
             student_dob:student.student_dob,
@@ -41,14 +44,22 @@ const NewApp=props=>{
             //     student_name,student_fathername,student_dob,student_gender,
             //     student_mobile,student_email,student_batch
             // })
-        }).then(()=>
+        }).then((res)=>
         {
-            console.log(res.data);
+            response=res.data;
+             console.log(res);
+            ReactSession.setStoreType("localStorage");
+            ReactSession.set("session_status","Active");
+            ReactSession.set("session_role","Student");
+            ReactSession.set("student_email",student.student_email);
         });
-        const response=await res.json();
+
         if(!response || response.status>=400){
+            console.log(response);
             alert("Please check the form again");
         }else{
+
+           history.push("/student/dashboard");
             alert("Registration Successful");
         }
 
@@ -85,9 +96,15 @@ const NewApp=props=>{
                                         </div>
                                         <div className="col-md-6 ">
                                             <label className="mt-3">Gender</label>
-                                            <input type="text" name="student_gender" className="form-control"
+                                            <select name="student_gender" className="form-control"
                                                    value={student.student_gender} onChange={handleInputs}
-                                            />
+                                            >
+                                                <option value="0">--select gender--</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Transgender">Transgender</option>
+                                            </select>
+
                                         </div>
                                         <div className="col-md-6 ">
                                             <label className="mt-3">Mobile No.</label>
@@ -95,13 +112,8 @@ const NewApp=props=>{
                                                    value={student.student_mobile} onChange={handleInputs}
                                             />
                                         </div>
+
                                         <div className="col-md-6 ">
-                                            <label className="mt-3">Session/Batch</label>
-                                            <input type="number" name="student_batch" className="form-control"
-                                                   value={student.student_batch} onChange={handleInputs}
-                                            />
-                                        </div>
-                                        <div className="col-md-12 ">
                                             <label className="mt-3">Email ID</label>
                                             <input type="email" name="student_email" className="form-control"
                                                    value={student.student_email} onChange={handleInputs}

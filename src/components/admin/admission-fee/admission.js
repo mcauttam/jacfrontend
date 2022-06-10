@@ -2,27 +2,27 @@ import React, {useEffect, useState} from "react";
 // import IsAdmin from "../isAdmin";
 import Axios from "axios";
 import {useHistory} from "react-router-dom";
-{/*This module will target to RegistrationFee Details*/}
-{/*This module target to RegistrationFee Model.
-* 1. Every College decide their own registration fee.
-* 2. If any college denied to apply reg fee. set it to 0.
-* 3. Student has paid or not paid the fee is decided by the balanced fee.*/}
-const AddRegistrationFee=()=>{
+{/*This module will target to Fee Details*/}
+
+
+const AddFee=()=>{
     const history=useHistory();
-    const [registrationfee,setRegistrationFee]=useState({});
+    const [fee,setFee]=useState({});
     let eleName,value;
     const handleInputs=(e)=>{
         eleName=e.target.name;
         value=e.target.value;
-        setRegistrationFee({...registrationfee,[eleName]:value});
+        setFee({...fee,[eleName]:value});
     }
     const [colleges,setColleges]=useState([]);
     const [streams,setStreams]=useState([]);
+    const [castes,setCastes]=useState([]);
 
     useEffect(()=>{
         if(!colleges || colleges.length === 0){
             getColleges();
             getStreams();
+            getCaste();
             // debugger
         }
     });
@@ -46,17 +46,27 @@ const AddRegistrationFee=()=>{
         // console.log(colleges);
     }
 
+    const getCaste=async ()=>{
+        // console.log(`${process.env.REACT_APP_URI}/college`);
+        const res=await Axios.get(`${process.env.REACT_APP_URI}caste`);
+        // debugger
+        const getclg= res.data;
+        setCastes(getclg);
+        console.log('----', getclg);
+        // console.log(colleges);
+    }
 
-    const postRegistrationFeeDetails=async (e)=>{
+    const postFeeDetails=async (e)=>{
         e.preventDefault();
-        //const {registrationfee_name,description}=registrationfee;
-        console.log(registrationfee);
-        const res=await Axios.post(`${process.env.REACT_APP_URI}admin/set/regfee`,{
-            paymentmaster_name:registrationfee.paymentmaster_name,
-            paymentmaster_amount:registrationfee.paymentmaster_amount,
-            college_id:registrationfee.college_id,
-            stream_id:registrationfee.stream_id,
-            description:registrationfee.description
+        //const {fee_name,description}=fee;
+        console.log(fee);
+        const res=await Axios.post(`${process.env.REACT_APP_URI}admin/set/fee`,{
+            feemaster_name:fee.feemaster_name,
+            feemaster_amount:fee.feemaster_amount,
+            college_id:fee.college_id,
+            stream_id:fee.stream_id,
+            category_id:fee.category_id,
+            description:fee.description
         }).then((res)=>
         {
             console.log(res.data);
@@ -65,7 +75,7 @@ const AddRegistrationFee=()=>{
                 return;
             }
             else{
-                history.push("/admin/success/Prospectus Fee/true");
+                history.push("/admin/success/Fee/true");
             }
         });
         console.log(await res);
@@ -81,27 +91,27 @@ const AddRegistrationFee=()=>{
                     <div className="col-md-3">&nbsp;</div>
                     <div className="col-md-6">
                         <div className="card border-secondary mt-3 text-justify">
-                            <div className="card-header"><h4 className="card-title"> Add New RegistrationFee</h4></div>
+                            <div className="card-header"><h4 className="card-title"> Add New Fee</h4></div>
                             <div className="card-body">
                                 <div className="container form-floating">
-                                    <form method="POST" id="form-registrationfee">
+                                    <form method="POST" id="form-fee">
                                         <div className="row">
                                             <div className="col-md-12 ">
-                                                <label>Propectus Fee Name</label>
-                                                <input type="text" name="paymentmaster_name" className="form-control"
-                                                       value={registrationfee.paymentmaster_name} onChange={handleInputs}
+                                                <label>Fee Name</label>
+                                                <input type="text" name="feemaster_name" className="form-control"
+                                                       value={fee.feemaster_name} onChange={handleInputs}
                                                 />
                                             </div>
                                             <div className="col-md-12 ">
                                                 <label className="mt-3">Fee Amount</label>
-                                                <input type="number" name="paymentmaster_amount" className="form-control"
-                                                       value={registrationfee.paymentmaster_amount} onChange={handleInputs}
+                                                <input type="number" name="feemaster_amount" className="form-control"
+                                                       value={fee.feemaster_amount} onChange={handleInputs}
                                                 />
                                             </div>
                                             <div className="col-md-12 ">
                                                 <label>College Name</label>
                                                 <select  name="college_id" className="form-control"
-                                                         onChange={handleInputs} value={registrationfee.college_id}>
+                                                         onChange={handleInputs} value={fee.college_id}>
                                                     <option value={0}>--Select College--</option>
                                                     {colleges.map(item => {
                                                         console.log(item);
@@ -114,7 +124,7 @@ const AddRegistrationFee=()=>{
                                             <div className="col-md-12 ">
                                                 <label>Stream Name</label>
                                                 <select  name="stream_id" className="form-control"
-                                                         onChange={handleInputs} value={registrationfee.stream_id}>
+                                                         onChange={handleInputs} value={fee.stream_id}>
                                                     <option value={0}>--Select Stream--</option>
                                                     {streams.map(item => {
                                                         console.log(item);
@@ -125,12 +135,26 @@ const AddRegistrationFee=()=>{
                                             </div>
 
                                             <div className="col-md-12 ">
+                                                <label>Caste Name</label>
+                                                <select  name="caste_id" className="form-control"
+                                                         onChange={handleInputs} value={fee.caste_id}>
+                                                    <option value={0}>--Select Caste--</option>
+                                                    {castes.map(item => {
+                                                        console.log(item);
+                                                        return <option key={item.caste_id} value={item.caste_id}> {item.caste_name}</option>
+                                                    })}
+                                                </select>
+
+                                            </div>
+
+
+                                            <div className="col-md-12 ">
                                                 <label className="mt-3">Description</label>
                                                 <textarea  name="description" className="form-control"
-                                                           value={registrationfee.description} onChange={handleInputs}
+                                                           value={fee.description} onChange={handleInputs}
                                                 />
                                             </div>
-                                            <button onClick={postRegistrationFeeDetails} className="btn btn-sm btn-success mt-3 mx-2" > Submit Information</button>
+                                            <button onClick={postFeeDetails} className="btn btn-sm btn-success mt-3 mx-2" > Submit Information</button>
 
                                         </div>
                                     </form>
@@ -145,4 +169,4 @@ const AddRegistrationFee=()=>{
     )
 }
 
-export default AddRegistrationFee;
+export default AddFee;

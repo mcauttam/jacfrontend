@@ -1,8 +1,11 @@
 import React, {useState} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
+import {useHistory} from "react-router-dom";
+import Welcome from "../../Student/welcome";
 
 const AddCollege=()=>{
+    const history=useHistory();
     const [college,setCollege]=useState({
         college_name:"",description:"",
     });//my battery died, will talk here, are you on mute?
@@ -15,7 +18,7 @@ const AddCollege=()=>{
     const postCollegeDetails=async (e)=>{
         e.preventDefault();
         const {college_name,description}=college;
-        const res=await Axios.post('http://localhost:5100/college',{
+        const res=await Axios.post(`${process.env.REACT_APP_URI}college`,{
             college_name:college.college_name,
             description:college.description,
         },{
@@ -30,6 +33,13 @@ const AddCollege=()=>{
         }).then((res)=>
         {
             console.log(res.data);
+            if(!res){
+                alert("Either the college is already exist or something went wrong. Please contact to your administrator.")
+                return;
+            }
+            else{
+                history.push("/admin/success/College/true");
+            }
         });
         //const response=await res.json();
         // if(!response || response.status>=400){

@@ -25,7 +25,7 @@ const Login=props=>{
     const postLoginCredentials=async (e)=>{
         e.preventDefault();
         const {student_email,student_password}=student;
-        const res=await Axios.post('http://localhost:5100/auth/student/login',{
+        const res=await Axios.post(`${process.env.REACT_APP_URI}auth/student/login`,{
             student_email:student.student_email,
             student_password:student.student_password,
         },{
@@ -47,18 +47,15 @@ const Login=props=>{
                 alert("Please check the login credentials again");
             }else{
                 ReactSession.set("student_email",res.data.data.student_email);
-                ReactSession.set("student_token",res.data.data.student_token);
+                ReactSession.set("student_token",res.data.token);
                 ReactSession.set("student_id",res.data.data.student_id);
-                alert("Login Successful")
-                alert(process.env.BACKEND_API);
+                ReactSession.set("auth",true);
+                alert("Login Successful");
+                // console.log(process.env);
                 // console.log(ReactSession.get("student_email"))
                 history.push("/student/dashboard");
-
             }
-
         });
-
-
     }
     return(
         <>

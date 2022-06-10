@@ -1,8 +1,10 @@
 import React, {useState} from "react";
 import IsAdmin from "../isAdmin";
 import Axios from "axios";
+import {useHistory} from "react-router-dom";
 
 const AddStream=()=>{
+    const history=useHistory();
     const [stream,setStream]=useState({
         stream_name:"",description:"",
     });
@@ -15,7 +17,7 @@ const AddStream=()=>{
     const postStreamDetails=async (e)=>{
         e.preventDefault();
         const {stream_name,description}=stream;
-        const res=await Axios.post('http://localhost:5100/stream',{
+        const res=await Axios.post(`${process.env.REACT_APP_URI}stream`,{
             stream_name:stream.stream_name,
             description:stream.description,
         },{
@@ -30,6 +32,13 @@ const AddStream=()=>{
         }).then((res)=>
         {
             console.log(res.data);
+            if(!res){
+                alert("Either the Stream is already exist or something went wrong. Please contact to your administrator.")
+                return;
+            }
+            else{
+                history.push("/admin/success/Stream/true");
+            }
         });
 
 
