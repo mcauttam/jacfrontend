@@ -2,6 +2,7 @@ import React, { useState} from "react";
 import {useHistory} from "react-router-dom";
 import Axios from "axios";
 import {ReactSession} from "react-client-session";
+import ArrowHeader from "./arrowHeader";
 // import {useHistory} from "react-router";
 // import {withRouter} from "react-router-dom";
 
@@ -66,6 +67,7 @@ const NewApp=props=>{
     }
     return(
         <>
+            <ArrowHeader form="basic"  />
             <div className="container">
                 <div className="row">
                     <div className="col-md-3">&nbsp;</div>

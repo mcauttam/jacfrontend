@@ -9,13 +9,13 @@ const StudentProfile=props=> {
 
     const [studentb,setStudentb]=    useState({
         student_name: "Uttam Singh",
-        student_regid:"12345",
+        student_regid:"",
         student_fathername: "PS Bist",
         student_dob: "",
         student_id: "",
         student_gender: "",
         student_mobile: "",
-        student_email: "mca.uttam@gmail.com",
+        student_email: "",
         student_batch: "",
     });
     const[studentd,setStudentd]=useState({

@@ -12,7 +12,8 @@ const StudentDashboard=props=>{
         history.push("/");
     }
     const [appliedStreamCollege,setAppliedStreamCollege]=useState([{
-    }])
+    }]);
+
     const [applicationDetails,setApplicationDetails]=useState([{}]);
     const [stream,setStream]=useState({
         stream_id:0,stream_name:"",stream_description:""
@@ -89,9 +90,11 @@ const StudentDashboard=props=>{
     }
 
     useEffect(()=>{
+        // alert(isProfileCompleted);
         getAppliedStreamList();
         getConvFeeStatus();
         getConvFeeDetails();
+        getProfileData();
         {/*Check whether the conv. fee paid or not*/}
 
         {/*Check where the prospectus (registration)node fee is paid or not*/}
@@ -100,7 +103,9 @@ const StudentDashboard=props=>{
     const getConvFeeDetails=async ()=>{
         const uri=`${process.env.REACT_APP_URI}fee/conv/details/${ReactSession.get("student_id")}`;
         // alert(uri);
-        const college_ids=await Axios.get(uri);
+        const college_ids=await Axios.get(uri,{
+            payment_status:'success',
+        });
         setConvFeeDetails(await college_ids.data);
         console.log("college->",college_ids.data);
     }
@@ -120,9 +125,46 @@ const StudentDashboard=props=>{
         localStorage.clear();
         history.push("/");
     }
+    const [isProfileCompleted,setIsProfileCompleted]=useState(false);
+    const getProfileData=async ()=>{
+        try {
+            console.log(`${process.env.REACT_APP_URI}student/detail/all/${ReactSession.get("student_id")}`)
+            const getProfile = await Axios.get(`${process.env.REACT_APP_URI}student/detail/all/${ReactSession.get("student_id")}`)
+                .then((res) => {
+                    if (res.data.length > 0) {
+                        console.log(res.data);
+                        setIsProfileCompleted(true);
+                    }
+                }).catch(err => {
+                    console.log(err.message)
+                })
+        }catch (err){
+            console.log(err.message);
+        }
+        // console.log(isProfileCompleted);
 
+    }
 
+    const updateProfileData=async ()=>{
+        const getProfile=await Axios.get(`${process.env.REACT_APP_URI}student/detail/id/${ReactSession.get("student_id")}`);
+        // update data will effect
+    }
 
+    const postApplyNewStream=()=>{
+        alert(isProfileCompleted)
+        console.log(isProfileCompleted);
+        if (isProfileCompleted){
+            history.push('/student/previous/academic');
+            // alert("Please Complete your profile first");
+            // history.push(`/student/profile/update/${ReactSession.get("student_id")}`);
+            // return;
+        }
+        else{
+            // history.push('/student/applied/stream');
+            alert("Please Complete your profile first");
+            history.push(`/student/profile/update/${ReactSession.get("student_id")}`);
+        }
+    }
     return(
         <>
             <div className="container-fluid">
@@ -141,18 +183,18 @@ const StudentDashboard=props=>{
                             <div className="card-body">
                                 <div className="container mt-2 mb-2">
 
-                                        <div className="row border">
-                                            {
-                                                convFeeStatus?
-                                                    <label className="btn btn-sm btn-block btn-success">Conv. Fee Paid</label>:
-                                                    <label className="btn btn-sm btn-block btn-danger"
-                                                           onClick={getConvFeeStatus}>Pay Conv. Fee</label>
-                                            }
-                                        </div>
+                                        {/*<div className="row border">*/}
+                                        {/*    {*/}
+                                        {/*        convFeeStatus?*/}
+                                        {/*            <label className="btn btn-sm btn-block btn-success">Conv. Fee Paid</label>:*/}
+                                        {/*            <label className="btn btn-sm btn-block btn-danger"*/}
+                                        {/*                   onClick={getConvFeeStatus}>Pay Conv. Fee</label>*/}
+                                        {/*    }*/}
+                                        {/*</div>*/}
 
-                                    <div className="row border">
-                                        <div className="col-md-3">College Name</div>
-                                        <div className="col-md-3">Stream Name</div>
+                                    <div className="row border fw-bold">
+                                        <div className="col-md-6 border">College Name</div>
+                                        <div className="col-md-6 border">Stream Name</div>
                                         {/*<div className="col-md-3">Conv Fee Status</div>*/}
                                         {/*<div className="col-md-3">Reg Fee Status</div>*/}
                                     </div>
@@ -163,8 +205,8 @@ const StudentDashboard=props=>{
                                         appliedStreamCollege.map( (item)=> {
                                               return (<>
                                                       <div className="row border" >
-                                                          <div className="col-md-3">{item.college_name}</div>
-                                                          <div className="col-md-3">{item.stream_name}</div>
+                                                          <div className="col-md-6 border">{item.college_name}</div>
+                                                          <div className="col-md-6 border">{item.stream_name}</div>
                                                           {/*<div className="col-md-3">{*/}
                                                           {/*    convFeeStatus?*/}
                                                           {/*    <label className="btn btn-sm btn-block btn-success">Conv Fee Successful</label> :*/}
@@ -187,14 +229,15 @@ const StudentDashboard=props=>{
                             <div className="card-header"><h4 className="card-title"> Student Dashboard</h4></div>
                             <div className="card-body">
                                 <div className="container form-floating">
-                                    <Link to="/student/applied/stream" className="btn btn-sm btn-primary mx-3" >Apply for New Stream</Link>
-                                    {convFeePaid?
-                                        <Link to="/student/profile" className="btn btn-sm btn-success">Proceed for Registration</Link>
+                                    {/*<Link to="/student/applied/stream" className="btn btn-sm btn-primary mx-3" >Apply for New Stream</Link>*/}
+                                    <button className="btn btn-sm btn-primary mx-3" onClick={postApplyNewStream}>Apply for New Stream</button>
+                                    {isProfileCompleted?
+                                        <Link to="/student/profile" className="btn btn-sm btn-success">Complete Profile</Link>
                                         :
-                                        <Link to="/student/profile" className="btn btn-sm btn-danger">My Profile</Link>
+                                        <Link to="/student/profile" className="btn btn-sm btn-danger">Edit Profile</Link>
                                         // <Redirect to="/student/convenience-fee" >Test</Redirect>
                                     }
-                                    <Link to="/student/profile" className="btn btn-sm btn-primary mx-3">My Profile</Link>
+                                    <Link to="/student/add/caste" className="btn btn-sm btn-primary mx-3">Update Caste information</Link>
                                 </div>
 
                             </div>

@@ -2,6 +2,7 @@ import React, {useState,useEffect} from 'react';
 import Axios from "axios";
 import {ReactSession} from "react-client-session";
 import {Link, useHistory} from "react-router-dom";
+import ArrowHeader from "../arrowHeader";
 // import {useEffect} from "@types/react";
 {/*Steps to be done by the students
 1. For every new stream student need to pay registration fee.
@@ -112,6 +113,7 @@ const StudentApplied=()=>{
 
     return(
         <>
+            <ArrowHeader form="stream"  />
             <div className="container">
                 <div className="row">
                     <div className="col-md-3">&nbsp;</div>

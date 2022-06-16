@@ -12,6 +12,7 @@ const PayUresponse= ()=>{
     const [amount, setAmount] = useState('');
     const [status, setStatus] = useState('');
     const [paid,setPaid]=useState(false);
+    const [isPaid,setIsPaid]=useState(false);
     useEffect(  () => {
         let paid1=false;
         Axios.get(`${process.env.REACT_APP_URI}fee/payu/getresponse`).then(res=>{
@@ -20,18 +21,38 @@ const PayUresponse= ()=>{
             setStatus(res.data.status);
             console.log(res);
             if(res.data.status==="success") {
+                setIsPaid(true);
+            }
                 setPaid(true);
                 paid1 = true;
                 console.log(txnid);
                 // while(elements[1]==='undefined'){}
                 const elements=txnid.split('_')
                 console.log(elements[1]);
-
-                Axios.put(`${process.env.REACT_APP_URI}fee/reg/details/${elements[1]}`, {
-                    payment_status: "success",
-                }).then(()=>{
-                    ReactSession.set("RegFeeStatus",true);
-                }).catch(err=>console.log(err));
+                if(elements[0]==="reg") {
+                    Axios.put(`${process.env.REACT_APP_URI}fee/reg/details/${elements[1]}`, {
+                        payment_status: res.data.status,
+                    }).then(() => {
+                        ReactSession.set("RegFeeStatus", true);
+                    }).catch(err => console.log(err));
+                }
+                console.log(elements[0])
+                if(elements[0]==="conv") {
+                    console.log("Conv. Fee Details")
+                    Axios.put(`${process.env.REACT_APP_URI}fee/conv/details/${elements[1]}`, {
+                        payment_status: res.data.status,
+                        amount_bal:0
+                    }).then(() => {
+                        ReactSession.set("ConvFeeStatus", true);
+                    }).catch(err => console.log(err));
+                }
+                if(elements[0]==="adm") {
+                    Axios.put(`${process.env.REACT_APP_URI}fee/admission/details/${elements[1]}`, {
+                        payment_status: res.data.status,
+                    }).then(() => {
+                        ReactSession.set("AdmFeeStatus", true);
+                    }).catch(err => console.log(err));
+                }
                 //update Applied Stream Prospectus Fee Status
                 // Axios.put(`${process.env.REACT_APP_URI}fee/reg/update/${elements[1]}`, {
                 //     payment_status: "success",
@@ -41,7 +62,7 @@ const PayUresponse= ()=>{
                 //     })
                 //     // ReactSession.set("RegFeeStatus",true);
                 // }).catch(err=>console.log(err));
-            }
+            // }
         }).catch(err=>{
             console.log(err);
         });
@@ -92,7 +113,13 @@ const PayUresponse= ()=>{
                     <div className="container">
                         <div className="row mt-4">
                             <div className="container text-center">
-                                <h4 className="fw-bold  form-control">Amount Paid: &nbsp;&nbsp;&nbsp;{amount}</h4>
+                                {
+                                    isPaid?
+                                        <h4 className="fw-bold  form-control">Amount Paid: &nbsp;&nbsp;&nbsp;{amount}</h4>
+                                        :
+                                        <h4 className="fw-bold text-danger form-control">Amount failed to pay: &nbsp;&nbsp;&nbsp;{amount}</h4>
+                                }
+
                             </div>
 
                             <div className="card bg-light mb-3" >

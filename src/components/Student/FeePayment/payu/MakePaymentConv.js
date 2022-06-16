@@ -2,25 +2,24 @@ import React, {useEffect, useState} from 'react';
 import Axios from 'axios';
 import {ReactSession} from "react-client-session";
 import {Container,Row,Col,Form,FormLabel,FormControl, Button} from "react-bootstrap";
-// const dotenv=require('dotenv');
-// dotenv.config();
 
 
 
-const MakePaymentReg=(props)=>{
+const MakePaymentConv=(props)=>{
     ReactSession.setStoreType("localStorage");
     const [baseURL] = useState(`https://test.payu.in/_payment`);
     const [title] = useState('Redirect to Payment Gateway');
     const [key, setKey] = useState('gtKFFx');
     const [salt] = useState('wia56q6O');
-    const [txnid, setTxnId] = useState("reg_" + ReactSession.get("txnid"));
+    const [txnid, setTxnId] = useState("conv_" + ReactSession.get("txnid"));
     //txnID will be get fromt he props
     const [amount, setAmount] = useState(ReactSession.get("amount"));
     const [firstname, setFirstName] = useState(ReactSession.get("student_name"));
     const [email, setEmail] = useState(ReactSession.get("student_email"));
     const [phone, setPhone] = useState(ReactSession.get("student_mobile"));
     //product info is also get from the props
-    const [productinfo, setProductInfo] = useState('Registration');
+    const [productinfo, setProductInfo] = useState('Convenience');
+    const [amount_bal,setAmount_Bal]=useState(0);
 
     const [surl] = useState(`http://localhost:5100/fee/payu/response`);
     const [furl] = useState(`http://localhost:5100/fee/payu/response`);
@@ -42,12 +41,13 @@ const MakePaymentReg=(props)=>{
 
 
     const calcHash =async (e) => {
-        const paymentDetails=await Axios.post(`${process.env.REACT_APP_URI}fee/reg/details`,{
-            paymentdetail_id:ReactSession.get("txnid"),paid_amount:amount,payment_status:"Pending",
+        const paymentDetails=await Axios.post(`${process.env.REACT_APP_URI}fee/conv/details`,{
+            conveniencefeedetail_id:ReactSession.get("txnid"),amount_paid:amount,payment_status:"Pending",
             college_id:ReactSession.get("collegeid"),
-            stream_id:ReactSession.get("streamid"),
+            // stream_id:ReactSession.get("streamid"),
             student_id:ReactSession.get("student_id"),
-            paymentmaster_id:ReactSession.get("paymentmaster_id")
+            conveniencefeemaster_id:ReactSession.get("conveniencefeemaster_id"),
+            amount_bal:ReactSession.get("amount_bal")
         });
         alert("We are redirecting you to payment gateway. Kindly follow the procedure to complete the transaction.",paymentDetails)
         console.log(paymentDetails);
@@ -78,7 +78,7 @@ const MakePaymentReg=(props)=>{
 
     // const startPayment=()=> {
     //     alert('Will proceed for the payment');
-    //     //Create new payment details. if it is successful then get paymentdetail_id to generate the txnID
+    //     //Create new payment details. if it is successful then get conveniencefeedetail_id to generate the txnID
     //     //Store all details into the localStorage to make n easy fetch request
     //     //Payment Code placed here
     // }
@@ -113,6 +113,7 @@ const MakePaymentReg=(props)=>{
                 <FormControl type="hidden" name="surl" value={surl} readOnly></FormControl>
                 <FormControl type="hidden" name="furl" value={furl} readOnly></FormControl>
                 <FormControl type="hidden" name="hash" value={hash} readOnly></FormControl>
+                <FormControl type="hidden" name="amount_bal" value={amount_bal} ></FormControl>
                 <button type="submit" className="btn btn-success btn-sm btn-block">Pay</button>
             </Form>
             {/*Registration Fee Payment Module*/}
@@ -120,4 +121,4 @@ const MakePaymentReg=(props)=>{
     )
 }
 
-export default MakePaymentReg;
+export default MakePaymentConv;

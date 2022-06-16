@@ -4,6 +4,7 @@ import {ReactSession} from "react-client-session";
 import {Container,Row,Col,Form,FormLabel,FormControl, Button} from "react-bootstrap";
 import {useHistory} from "react-router-dom";
 import redirectToPay from "./payu/redirectToPay";
+import ArrowHeader from "../arrowHeader";
 
 
 
@@ -75,27 +76,30 @@ const RegFeePayment=(props)=>{
 
 
 return(
-    <div className="container text-lg-center mt-4">
-        <table className="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Applied College Name</th>
-                    <th>Applied Stream Name</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{feeDetails.student_name}</td>
-                    <td>{feeDetails.college_name}</td>
-                    <td>{feeDetails.stream_name}</td>
-                </tr>
-            </tbody>
-        </table>
+    <>
+        <ArrowHeader form="pay"  />
+        <div className="container text-lg-center mt-4">
+            <table className="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Applied College Name</th>
+                        <th>Applied Stream Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{feeDetails.student_name}</td>
+                        <td>{feeDetails.college_name}</td>
+                        <td>{feeDetails.stream_name}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <button className="btn btn-sm btn-primary mt-4" onClick={(e)=>redirectToPay(e)}>Confirm to pay {feePayable}</button>
+            <button className="btn btn-sm btn-primary mt-4" onClick={(e)=>redirectToPay(e)}>Confirm to pay {feePayable}</button>
 
-    </div>
+        </div>
+    </>
 )
 }
 

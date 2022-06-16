@@ -38,7 +38,12 @@ import AdminLogin from "./components/admin/login/login";
 import AddRegistrationFee from "./components/admin/registration-fee/registrationFee";
 import AddFee from "./components/admin/admission-fee/admission";
 import AddCategory from "./components/admin/category/addCategory";
-import MakePayment from "./components/Student/FeePayment/payu/redirectToPay";
+// import MakePayment from "./components/Student/FeePayment/payu/redirectToPay";
+import MakePaymentReg from "./components/Student/FeePayment/payu/redirectToPay";
+import MakePaymentConv from "./components/Student/FeePayment/payu/MakePaymentConv";
+// import StudentDetailed from "./components/Student/studentDetailed";
+import StudentDetail from "./components/Student/studentDetailed";
+import PreviousSchool from "./components/Student/prevSchool/previousSchool";
 
 
 
@@ -55,6 +60,7 @@ function App(){
                     {/*Student Block for Admission Process*/}
                     <Route exact path="/" component={StudentBasicRegistration}/>
                     <Route exact path="/newApp" component={NewApp}/>
+                    <Route exact path="/student/profile/update/:id" component={StudentDetail}/>
                     {/*Student Dashboard*/}
                     <Route exact path="/student/dashboard" component={StudentDashboard}/>
                     {/*Login Student*/}
@@ -64,6 +70,7 @@ function App(){
                     {/*<Route exact path="/student/convenience-fee" component={getConvenienceFeeDetails}/>*/}
                     {/*<Route exact path="/student/registration" component={RegistrationForm}/>*/}
                     <Route exact path="/student/previous/academic" component={AcademicDetails}/>
+                    <Route exact path="/student/previous/school" component={PreviousSchool}/>
                     {/*Student Applied for the Stream*/}
                     <Route exact path="/student/applied/stream" component={StudentApplied}/>
                     {/*Convenience Fee Payment module*/}
@@ -73,10 +80,12 @@ function App(){
                     <Route exact path="/student/ConvFee/Payment" component={ConvFeePayment}/>
                     {/*Registration Fee Payment module*/}
                     <Route exact path="/student/RegFee/Payment/:stid/:strid/:clgid" component={RegFeePayment}/>
-
+                    {/*Convenience Fee Payment module*/}
+                    <Route exact path="/student/ConvFee/Payment/:stid/:clgid" component={ConvFeePayment}/>
                     {/*Make payment online through payu money*/}
-                    <Route exact path="/payu/make/payment" component={MakePayment}/>
-
+                    <Route exact path="/payu/make/payment" component={MakePaymentReg}/>
+                    <Route exact path="/payu/make/payment/conv" component={MakePaymentConv}/>
+                    <Route exact path="/student/add/caste" component={AddCaste}/>
                     {/*Email Realted Services*/}
                     <Route exact path="/admin/email" component={ContactUS}/>
 

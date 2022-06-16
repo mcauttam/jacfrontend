@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import Axios from "axios";
 import {Link, Redirect, useHistory} from "react-router-dom";
 import {ReactSession} from "react-client-session";
+import CollegeAdmin from "./cadashboard";
 // import {isAdmin} from "./isAdmin";
 // import {withRouter} from "react-router-dom";
 
@@ -39,7 +40,7 @@ const AdminDashboard=props=>{
                             <div className="card-header"><h4 className="card-title"> Admin Dashboard</h4></div>
                             <div className="card-body">
                                 {
-                                    ReactSession.get("role") === "collegeadmin" ?
+                                    ReactSession.get("role") === "mainadmin" ?
                                         <div className="container mt-2 mb-2">
 
                                             <div className="row">
@@ -146,7 +147,7 @@ const AdminDashboard=props=>{
                                         :
                                         <>
                                             <div className="container mt-2 mb-2">
-                                                College Admin Dashboard here
+                                                <CollegeAdmin/>
                                             </div>
                                         </>
                                 }
